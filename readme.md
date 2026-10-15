@@ -2,6 +2,18 @@
 
 A simple, fast, dependency-free task tracker that runs entirely in the browser.
 
+## Documentation
+
+Full documentation lives in the [`docs/`](./docs/) folder:
+
+- [Overview](./docs/overview.md)
+- [Architecture](./docs/architecture.md)
+- [User Guide](./docs/user-guide.md)
+- [Developer Guide](./docs/developer-guide.md)
+- [API Reference](./docs/api-reference.md)
+- [Accessibility](./docs/accessibility.md)
+- [Changelog](./docs/changelog.md)
+
 ## Features
 
 - **Add, complete, and delete tasks**
