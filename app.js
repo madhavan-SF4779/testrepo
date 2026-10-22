@@ -15,8 +15,13 @@
     tasksFooter: document.getElementById("tasks-footer"),
     filterButtons: document.querySelectorAll(".filter-btn"),
     themeToggle: document.getElementById("theme-toggle"),
-    themeIcon: document.querySelector(".theme-icon"),
     template: document.getElementById("task-item-template"),
+    statTotal: document.getElementById("stat-total"),
+    statActive: document.getElementById("stat-active"),
+    statCompleted: document.getElementById("stat-completed"),
+    badgeAll: document.getElementById("badge-all"),
+    badgeActive: document.getElementById("badge-active"),
+    badgeCompleted: document.getElementById("badge-completed"),
   };
 
   const state = {
@@ -55,7 +60,10 @@
   function loadTheme() {
     const stored = localStorage.getItem(THEME_KEY);
     if (stored === "light" || stored === "dark") return stored;
-    if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+    if (
+      window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches
+    ) {
       return "dark";
     }
     return "light";
@@ -63,9 +71,6 @@
 
   function applyTheme(theme) {
     document.documentElement.setAttribute("data-theme", theme);
-    if (els.themeIcon) {
-      els.themeIcon.innerHTML = theme === "dark" ? "&#9790;" : "&#9728;";
-    }
     if (els.themeToggle) {
       els.themeToggle.setAttribute(
         "aria-label",
@@ -158,11 +163,20 @@
     els.list.appendChild(frag);
 
     const total = state.tasks.length;
-    const remaining = state.tasks.filter((t) => !t.completed).length;
-    const itemLabel = total === 1 ? "item" : "items";
+    const completedCount = state.tasks.filter((t) => t.completed).length;
+    const remaining = total - completedCount;
+
+    if (els.statTotal) els.statTotal.textContent = String(total);
+    if (els.statActive) els.statActive.textContent = String(remaining);
+    if (els.statCompleted) els.statCompleted.textContent = String(completedCount);
+    if (els.badgeAll) els.badgeAll.textContent = String(total);
+    if (els.badgeActive) els.badgeActive.textContent = String(remaining);
+    if (els.badgeCompleted) els.badgeCompleted.textContent = String(completedCount);
+
+    const itemLabel = remaining === 1 ? "item" : "items";
     els.taskCount.textContent = `${remaining} ${itemLabel} left`;
 
-    const hasCompleted = state.tasks.some((t) => t.completed);
+    const hasCompleted = completedCount > 0;
     els.tasksFooter.hidden = !hasCompleted;
     els.clearCompleted.disabled = !hasCompleted;
 

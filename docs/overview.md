@@ -11,6 +11,7 @@ Task Tracker is a single-page web application that helps users capture, organize
 - **Predictable behavior.** The UI must always reflect the underlying state.
 - **Accessible by default.** Works with a keyboard, a screen reader, and any modern browser.
 - **Lightweight.** Total payload is under 20 KB unminified and loads in a single round trip.
+- **Calm, modern aesthetic.** A glassmorphic interface with gradient accents and ambient motion that recedes into the background — never louder than the work.
 
 ## Non-goals
 

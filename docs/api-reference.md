@@ -20,7 +20,7 @@ state = {
 }
 ```
 
-`Task` is `{ id: string, text: string, completed: boolean }`.
+`Task` is `{ id: string, text: string, completed: boolean, createdAt: number }`. `createdAt` is set when the task is added but is not used by the UI; it is preserved on round-trip through `localStorage` for forward compatibility.
 
 ## DOM cache: `els`
 
@@ -37,8 +37,13 @@ state = {
 | `tasksFooter` | `#tasks-footer` | Container that appears when there are tasks |
 | `filterButtons` | NodeList of `.filter-btn` | The three filter buttons |
 | `themeToggle` | `#theme-toggle` | The sun/moon button |
-| `themeIcon` | `.theme-icon` | The icon inside the toggle |
 | `template` | `#task-item-template` | The `<template>` used to clone a row |
+| `statTotal` | `#stat-total` | Stats card — total task count |
+| `statActive` | `#stat-active` | Stats card — active task count |
+| `statCompleted` | `#stat-completed` | Stats card — completed task count |
+| `badgeAll` | `#badge-all` | Live count badge on the **All** filter |
+| `badgeActive` | `#badge-active` | Live count badge on the **Active** filter |
+| `badgeCompleted` | `#badge-completed` | Live count badge on the **Completed** filter |
 
 ## Functions
 
@@ -58,7 +63,7 @@ Returns the persisted theme if present, otherwise falls back to the OS preferenc
 
 #### `applyTheme(theme): void`
 
-Sets `data-theme` on `<html>` and updates the toggle icon (`☀` or `☾`). Does not persist — call after `loadTheme()` or after a user toggle, then save explicitly.
+Sets `data-theme` on `<html>` and updates the toggle's `aria-label`. The visible sun/moon icon swap is driven by CSS (`[data-theme="dark"]` selectors) — JS no longer touches the DOM inside the button. Does not persist — call after `loadTheme()` or after a user toggle, then save explicitly.
 
 ### State mutations
 
@@ -80,13 +85,9 @@ Removes every task where `completed === true`, then saves and re-renders.
 
 ### Rendering
 
-#### `createTaskElement(task): DocumentFragment`
+#### `getFilteredTasks(): Task[]`
 
-Clones the `<template>` content, fills in the text and the checkbox state, wires up the checkbox and delete button, and returns the fragment.
-
-#### `getVisibleTasks(): Task[]`
-
-Returns the subset of `state.tasks` matching `state.filter`.
+Returns the subset of `state.tasks` matching `state.filter`. (`all` returns every task; `active` returns non-completed; `completed` returns completed.)
 
 #### `render(): void`
 
@@ -94,31 +95,34 @@ The single entry point that reconciles the DOM with `state`. Steps:
 
 1. Empty the `<ul>`.
 2. If the list would be empty, show the empty state.
-3. Otherwise, append one fragment per visible task.
-4. Update the counter text and `aria-live` politeness.
-5. Show or hide the footer based on whether any tasks exist.
-6. Update filter button `aria-pressed` and the active class.
+3. Otherwise, append one cloned template per visible task, wiring the toggle and delete handlers.
+4. Update the three stat cards (`stat-total`, `stat-active`, `stat-completed`).
+5. Update the three filter badges (`badge-all`, `badge-active`, `badge-completed`).
+6. Update the "N items left" counter (`task-count`).
+7. Show or hide the footer (`tasks-footer`) based on whether any completed tasks exist, and disable the **Clear completed** button when none exist.
+8. Update filter button `aria-selected` and the active class (handled by `setFilter`, not `render`).
 
 ### Events
 
-#### `attachEvents(): void`
+#### `init(): void`
 
 Wires up:
 
 | Selector | Event | Handler |
 | --- | --- | --- |
-| `#task-form` | `submit` | read input, `addTask` |
-| `#task-list` | `change` (delegated) | `toggleTask` for the checkbox |
-| `#task-list` | `click` (delegated) | `deleteTask` for `.delete-btn` |
+| `#task-form` | `submit` | read input, `addTask`, clear + refocus the input |
+| `.task-toggle` (per row) | `change` | `toggleTask(id)` |
+| `.task-delete` (per row) | `click` | `deleteTask(id)` |
 | `#clear-completed` | `click` | `clearCompleted` |
-| `.filter-btn` | `click` | set `state.filter`, re-render |
-| `#theme-toggle` | `click` | flip `state.theme`, `applyTheme`, persist |
+| `.filter-btn` | `click` | `setFilter(filter)` |
+| `#theme-toggle` | `click` | `toggleTheme()` |
+| `matchMedia('(prefers-color-scheme: dark)')` | `change` | sync theme **only if** the user has not manually chosen one |
 
-Event delegation is used inside the task list so that handlers do not need to be re-attached after each render.
+Handlers are attached directly on each cloned row inside `render()`. The list is rebuilt on every state change, so each row's listeners are short-lived — no event delegation is needed.
 
 ### IDs
 
-#### `newId(): string`
+#### `createId(): string`
 
 Returns a UUIDv4 via `crypto.randomUUID()` when available, otherwise a `${Date.now()}-${Math.random()}` fallback.
 
@@ -126,7 +130,7 @@ Returns a UUIDv4 via `crypto.randomUUID()` when available, otherwise a `${Date.n
 
 #### `init(): void`
 
-Called once on `DOMContentLoaded` (or immediately if the document is already interactive). It builds `els`, hydrates `state` from storage, calls `applyTheme`, calls `render`, and finally `attachEvents`.
+Called once on `DOMContentLoaded` (or immediately if the document is already interactive). It builds `els`, hydrates `state` from storage, calls `applyTheme`, attaches every event handler, and finally calls `render`.
 
 ## Error handling
 

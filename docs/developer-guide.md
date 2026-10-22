@@ -58,7 +58,7 @@ Worked example: add a **priority** field to each task.
 ```js
 // 1. Extend the task shape
 state.tasks.push({
-  id: newId(),
+  id: createId(),
   text: "Pay rent",
   completed: false,
   priority: "high", // new

@@ -22,7 +22,7 @@ Click the checkbox again to un-complete the task.
 
 ## 3. Filtering tasks
 
-Use the three filter buttons near the top-right of the task list:
+Use the three filter buttons near the top of the task list. Each filter shows a live count of the tasks it contains:
 
 | Filter | Shows |
 | --- | --- |
@@ -32,19 +32,29 @@ Use the three filter buttons near the top-right of the task list:
 
 The active filter is highlighted. The filter resets to **All** when you reload the page.
 
-## 4. Deleting a task
+## 4. Reading your stats
+
+Above the task list, three stat cards show:
+
+- **Total** — every task you have.
+- **Active** — tasks that are still pending.
+- **Completed** — tasks you have finished.
+
+These counts update live as you add, complete, or delete tasks.
+
+## 5. Deleting a task
 
 Click the **×** button on the right of a task to remove it. Deletion is immediate and permanent; there is no undo. To remove many completed tasks at once, use **Clear completed** (see below).
 
-## 5. Clearing all completed tasks
+## 6. Clearing all completed tasks
 
 When at least one task is completed, a **Clear completed** link appears in the bottom-right of the task list. Click it to permanently delete all completed tasks in one action. Active tasks are not affected.
 
-## 6. Light and dark theme
+## 7. Light and dark theme
 
 Click the **sun/moon button** in the top-right of the header to toggle between light and dark mode. The app remembers your choice across sessions. On first visit, the app uses the theme your operating system reports (`prefers-color-scheme`).
 
-## 7. Keyboard shortcuts
+## 8. Keyboard shortcuts
 
 | Key | Action |
 | --- | --- |
@@ -54,7 +64,7 @@ Click the **sun/moon button** in the top-right of the header to toggle between l
 | **Space** (on a focused button) | Activate the button |
 | **Esc** (on a focused task) | Blur the element |
 
-## 8. Where your data lives
+## 9. Where your data lives
 
 Everything you create is stored **only in your browser's local storage**. It never leaves your device. If you:
 
@@ -64,7 +74,7 @@ Everything you create is stored **only in your browser's local storage**. It nev
 
 To back up your data, use your browser's regular bookmark/export workflow for site data.
 
-## 9. Troubleshooting
+## 10. Troubleshooting
 
 | Symptom | Likely cause | Fix |
 | --- | --- | --- |
